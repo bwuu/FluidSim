@@ -1,0 +1,48 @@
+﻿Build started 5/6/2013 5:10:34 AM.
+     1>Project "C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Fluid_Sim_1\Fluid_Sim_1.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt boundary_drawing_tools.cpp marching_cubes.cpp Simulation.cpp simul_funcs.cpp
+         boundary_drawing_tools.cpp
+     1>boundary_drawing_tools.cpp(271): warning C4018: '<' : signed/unsigned mismatch
+         marching_cubes.cpp
+     1>marching_cubes.cpp(246): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>marching_cubes.cpp(247): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>marching_cubes.cpp(249): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>marching_cubes.cpp(250): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>marching_cubes.cpp(252): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+     1>marching_cubes.cpp(253): warning C4244: 'argument' : conversion from 'double' to 'GLfloat', possible loss of data
+         Simulation.cpp
+     1>Simulation.cpp(37): warning C4305: 'initializing' : truncation from 'double' to 'GLfloat'
+     1>Simulation.cpp(157): warning C4018: '<' : signed/unsigned mismatch
+     1>Simulation.cpp(161): warning C4018: '<' : signed/unsigned mismatch
+         simul_funcs.cpp
+     1>simul_funcs.cpp(83): warning C4018: '<' : signed/unsigned mismatch
+     1>simul_funcs.cpp(192): warning C4018: '<' : signed/unsigned mismatch
+     1>simul_funcs.cpp(478): warning C4018: '<' : signed/unsigned mismatch
+     1>simul_funcs.cpp(506): warning C4018: '<' : signed/unsigned mismatch
+     1>simul_funcs.cpp(519): warning C4018: '<' : signed/unsigned mismatch
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\Fluid_Sim_1.exe" /NOLOGO opengl32.lib glu32.lib glfw.lib glut32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\Fluid_Sim_1.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\Fluid_Sim_1.lib" /MACHINE:X86 /PROFILE /SAFESEH Release\boundary_drawing_tools.obj
+         Release\marching_cubes.obj
+         Release\Simulation.obj
+         Release\simul_funcs.obj
+         Generating code
+         Finished generating code
+     1>glfw.lib(enable.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(enable.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(glext.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(glext.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(init.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(init.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(input.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(input.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(time.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(time.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(win32_enable.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(win32_enable.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(win32_fullscreen.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(win32_fullscreen.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(win32_glext.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(win32_glext.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(win32_init.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(win32_init.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(win32_time.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(win32_time.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(win32_window.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(win32_window.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+     1>glfw.lib(window.obj) : warning LNK4099: PDB 'vc110.pdb' was not found with 'glfw.lib(window.obj)' or at 'C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\vc110.pdb'; linking object as if no debug info
+         Fluid_Sim_1.vcxproj -> C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Release\Fluid_Sim_1.exe
+     1>Done Building Project "C:\Users\Bryan\Documents\Visual Studio 2012\Projects\Fluid_Sim_1\Fluid_Sim_1\Fluid_Sim_1.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:03.38
