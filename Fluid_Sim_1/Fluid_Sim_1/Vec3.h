@@ -3,23 +3,23 @@
 
 class Vec3 {
 public:
-	double x[3];
+	float x[3];
 
 	Vec3 ();
-	Vec3 (double, double, double);
+	Vec3 (float, float, float);
 
 	Vec3 operator + (Vec3);
 	Vec3 operator - (Vec3);
-	Vec3 operator * (double);
+	Vec3 operator * (float);
 	Vec3 operator += (Vec3);
 	Vec3 operator - ();
 	
-	double sqr_mag ();
-	double mag();
+	float sqr_mag ();
+	float mag();
 	Vec3 unit_vec();
 };
 
-double dot(Vec3 v1, Vec3 v2);
+float dot(Vec3 v1, Vec3 v2);
 
 Vec3 cross(Vec3 v1, Vec3 v2);
 

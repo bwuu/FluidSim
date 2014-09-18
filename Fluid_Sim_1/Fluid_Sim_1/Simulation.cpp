@@ -6,30 +6,38 @@
 #include "Simul_funcs.h"
 #include "marching_cubes.h"
 #include "boundary_drawing_tools.h"
+#include "GL/glut.h"
 
 void Shut_Down(int return_code);
-void GLFWCALL reshape(int w, int h);
+void Reshape(GLFWwindow* window, int w, int h);
 void save_ghosts(std::vector<Particle>& static_vec);
 
 	
 std::vector<Particle> static_vec;
 std::vector<Particle> p_vec(init_slen_x * init_slen_y * init_slen_z);
 std::vector<Cell> c_vec(GRIDSIZE);
+GLFWwindow* window;
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, GL_TRUE);
+}
 
 //  init glfw
 void init( ) 
 { 
-	glfwInit();
-	glfwOpenWindow (0, 0, 0, 0, 0, 0, 8, 0, GLFW_WINDOW);
-	glfwSetWindowTitle("The GLFW Window");
+	if(!glfwInit())
+        exit(1);
+
+	window = glfwCreateWindow (640, 480, "Simulation", NULL, NULL);
+    glfwMakeContextCurrent(window);
+    glfwSetKeyCallback(window, key_callback);
 
 	glClearColor (1.0, 1.0, 1.0, 1.0);
-	glShadeModel (GL_SMOOTH);
+	//glShadeModel (GL_SMOOTH);
 
-	glEnable (GL_BLEND);
-	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-
+    /*
 	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
 
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
@@ -40,10 +48,10 @@ void init( )
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_DEPTH_TEST);
+    */
 
-
-	glfwSetWindowSizeCallback(reshape);
-    glPointSize( 1.0 );
+	glfwSetWindowSizeCallback(window, Reshape);
+    glPointSize( 3.0 );
 }    
 
 //  forward simulation one step - does not display
@@ -74,13 +82,14 @@ void display(std::vector<Particle>& p_vec, std::vector<Cell>& c_vec, Container c
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(0.0, 2.0, 0.0, 0.0, 0.0, -4.0, 0.0, 1.0, 0.0);
+	
+	gluLookAt(0.0, 0.3, 0.3, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
 
-	glTranslated(-0.5, -0.5, -4.0);
+	//glTranslated(-0.0, -0.0, 0.8);
 
-	glTranslated(cont.x[0], cont.x[2], -cont.x[1]);
+	//glTranslated(cont.x[0], cont.x[2], -cont.x[1]);
 
-	/*
+	
 	glBegin( GL_POINTS );
 	glColor3f( 0.4f, 0.3f, 0.5f );
 	for ( int i = 0; i < p_vec.size(); i++ )
@@ -88,8 +97,7 @@ void display(std::vector<Particle>& p_vec, std::vector<Cell>& c_vec, Container c
 			glVertex3f( p_vec[i].x[0] - .5, p_vec[i].x[2] - .5, -p_vec[i].x[1]);
 	}
 	glEnd();
-	*/
-	/*
+
 	glBegin(GL_LINES);
 	glColor3d(0.0, 0.0, 0.0);
 		glVertex3d(0.2, 0.2, -0.2);
@@ -116,11 +124,12 @@ void display(std::vector<Particle>& p_vec, std::vector<Cell>& c_vec, Container c
 		glVertex3d(0.8, 0.2, -0.8);
 		glVertex3d(0.8, 0.2, -0.2);
 	glEnd();
-	*/
-	glRotated(-90.0, 1.0, 0.0, 0.0);
-	mc_render_image(c_vec);
 
-    glfwSwapBuffers();
+	//glRotated(-90.0, 1.0, 0.0, 0.0);
+	//mc_render_image(c_vec);
+    std::cout << "swapping buffers";
+    glfwSwapBuffers(window);
+    std::cout << "swapped";
 }
 
 
@@ -128,7 +137,7 @@ void display(std::vector<Particle>& p_vec, std::vector<Cell>& c_vec, Container c
 int main()
 {
 	//  OpenGL state variables
-	int simulating = GL_FALSE;
+	int simulating = GL_TRUE;
 	
 	//  set boundaries
 	Container bound_box;
@@ -162,16 +171,18 @@ int main()
 		c_vec[1].ref_list.push_back(&static_vec[i]);
 
 	init ();
-	double old_time = glfwGetTime();
+	float old_time = glfwGetTime();
 
 	while (1) {
 		if (simulating == GL_TRUE) 
 			update(p_vec, static_vec, c_vec, bound_box);
-
+        /*
 		for (int i = 0; i < 3; i++)
 			bound_box.x[i] += bound_box.v[i] * dt;
+            */
 
 		display(p_vec, c_vec, bound_box);
+        /*
 		if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
 			break;
 		if (glfwGetKey(GLFW_KEY_UP) == GLFW_PRESS)
@@ -189,6 +200,7 @@ int main()
 			if (simulating == GL_FALSE) simulating = GL_TRUE;
 			//  else simulating = GL_FALSE;
 		}
+        */
 	}
 	Shut_Down(0);
 	return 0;
@@ -202,7 +214,7 @@ void Shut_Down(int return_code)
 }
 
 //  reshape func
-void GLFWCALL reshape(int w, int h)
+void Reshape(GLFWwindow* window, int w, int h)
 {
    glViewport (0, 0, (GLsizei) w, (GLsizei) h);
    glMatrixMode(GL_PROJECTION);

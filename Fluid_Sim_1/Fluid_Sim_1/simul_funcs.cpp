@@ -7,6 +7,12 @@
 //  Particles are passed using their pointers, vectors are passed
 //  by reference (&)
 
+//  KERNELS
+float poly6kernel (float r)
+{
+    return 315 / (64 * PI * pow(h, 9)) * pow(h*h - r*r, 3);
+}
+
 //  ************************************************************
 //  Linked Cell Updater
 //  ************************************************************
@@ -54,7 +60,7 @@ void iterate_md_over_cell(Particle* p, Cell& acell)
 	// iterate over cell
 	while (it != acell.ref_list.end()) 
 	{
-		const double sqr_dist = pow(p->x[0] - (*it)->x[0], 2) 
+		const float sqr_dist = pow(p->x[0] - (*it)->x[0], 2) 
 			+ pow(p->x[1] - (*it)->x[1], 2)
 			+ pow(p->x[2] - (*it)->x[2], 2);
 
@@ -66,7 +72,7 @@ void iterate_md_over_cell(Particle* p, Cell& acell)
 		}
 
 		//  can get huge
-		const double kernel_res = 315 / (64 * PI * pow(h, 9)) * (pow((h*h - sqr_dist), 3));
+		const float kernel_res = 315 / (64 * PI * pow(h, 9)) * (pow((h*h - sqr_dist), 3));
 		
 		assert(kernel_res <= DBL_MAX && kernel_res >= -DBL_MAX);
 		p->mass_density += kernel_res * mass;
@@ -125,7 +131,7 @@ void update_mass_densities(std::vector<Cell>& c_vec)
 
 			while (it2 != c_vec[i].ref_list.end()) 
 			{ 
-				double sqr_dist = pow((*it1)->x[0] - (*it2)->x[0], 2) 
+				float sqr_dist = pow((*it1)->x[0] - (*it2)->x[0], 2) 
 					+ pow((*it1)->x[1] - (*it2)->x[1], 2)
 					+ pow((*it1)->x[2] - (*it2)->x[2], 2);
 				if (sqr_dist > h*h)
@@ -134,7 +140,7 @@ void update_mass_densities(std::vector<Cell>& c_vec)
 					continue;
 				}
 				//  can get huge
-				double kernel_res = 315 / (64 * PI * pow(h, 9)) * (pow((h*h - sqr_dist), 3)); //opt-minor -2
+				float kernel_res = 315 / (64 * PI * pow(h, 9)) * (pow((h*h - sqr_dist), 3)); //opt-minor -2
 
 				(*it1)->mass_density += kernel_res * mass;
 				(*it2)->mass_density += kernel_res * mass;
@@ -211,10 +217,10 @@ void iterate_forces_over_cell(Particle* p, Cell& acell)
 	std::list<Particle*>::iterator it = acell.ref_list.begin();
 	while (it != acell.ref_list.end()) 
 	{ 
-		const double x_disp = p->x[0] - (*it)->x[0];
-		const double y_disp = p->x[1] - (*it)->x[1];
-		const double z_disp = p->x[2] - (*it)->x[2];
-		const double sqr_dist = x_disp * x_disp + y_disp * y_disp + z_disp * z_disp;
+		const float x_disp = p->x[0] - (*it)->x[0];
+		const float y_disp = p->x[1] - (*it)->x[1];
+		const float z_disp = p->x[2] - (*it)->x[2];
+		const float sqr_dist = x_disp * x_disp + y_disp * y_disp + z_disp * z_disp;
 
 		if (sqr_dist > h*h)
 		{
@@ -222,11 +228,11 @@ void iterate_forces_over_cell(Particle* p, Cell& acell)
 			continue;
 		}
 
-		const double dist = sqrt(sqr_dist);
-		const double inv_density_p = 1 / p->mass_density; /// wtf
-		const double inv_density_it = 1 / (*it)->mass_density;
-		double symmetric_calc_res;
-		double x_force, y_force, z_force;
+		const float dist = sqrt(sqr_dist);
+		const float inv_density_p = 1 / p->mass_density; /// wtf
+		const float inv_density_it = 1 / (*it)->mass_density;
+		float symmetric_calc_res;
+		float x_force, y_force, z_force;
 		
 		//  pressure calc - force is actually acceleration lol 
 		symmetric_calc_res = (p->pressure * pow(inv_density_p, 2) + (*it)->pressure * pow(inv_density_it, 2))
@@ -294,7 +300,7 @@ void update_forces(std::vector<Cell>& c_vec)
 			while (it2 != c_vec[i].ref_list.end()) 
 			{ 
 				//  used by several subsequent calculations
-				double sqr_dist = pow((*it1)->x[0] - (*it2)->x[0], 2) 
+				float sqr_dist = pow((*it1)->x[0] - (*it2)->x[0], 2) 
 					+ pow((*it1)->x[1] - (*it2)->x[1], 2)
 					+ pow((*it1)->x[2] - (*it2)->x[2], 2);
 
@@ -304,17 +310,17 @@ void update_forces(std::vector<Cell>& c_vec)
 					continue;
 				}
 
-				double dist = sqrt(sqr_dist);
-				double symmetric_calc_res;
-				double x_force, y_force, z_force;
-				double contrib;
+				float dist = sqrt(sqr_dist);
+				float symmetric_calc_res;
+				float x_force, y_force, z_force;
+				float contrib;
 
 				//  mutual pressure force calculation - negatives accounted for and cancelled
 				/*
-				double artdot = ((*it1)->x[0] - (*it2)->x[0]) * ((*it1)->v[0] - (*it2)->v[0])
+				float artdot = ((*it1)->x[0] - (*it2)->x[0]) * ((*it1)->v[0] - (*it2)->v[0])
 					+ ((*it1)->x[1] - (*it2)->x[1]) * ((*it1)->v[1] - (*it2)->v[1])
 					+ ((*it1)->x[2] - (*it2)->x[2]) * ((*it1)->v[2] - (*it2)->v[2]);
-				double artific_kernel_res = 
+				float artific_kernel_res = 
 					(artdot > 0) ? 0 : (artdot / (sqr_dist + corr));
 					
 				assert(artific_kernel_res <= DBL_MAX && artific_kernel_res >= -DBL_MAX);
@@ -510,7 +516,7 @@ void update_positions(std::vector<Particle>& p_vec) {
 	}
 }
 
-double sgn(double val) {
+float sgn(float val) {
     return (0 < val) - (val < 0);
 }
 
@@ -518,24 +524,24 @@ void dumb_collisions(std::vector<Particle>& p_vec, Container& cont)
 {
 	for (int i = 0; i < p_vec.size(); i++) 
 	{
-		double xlocal = p_vec[i].x[0] - centre_x;
-		double ylocal = p_vec[i].x[1] - centre_y;
-		double zlocal = p_vec[i].x[2] - centre_z;
-		double ax = abs(xlocal), 
+		float xlocal = p_vec[i].x[0] - centre_x;
+		float ylocal = p_vec[i].x[1] - centre_y;
+		float zlocal = p_vec[i].x[2] - centre_z;
+		float ax = abs(xlocal), 
 			ay = abs(ylocal),
 			az = abs(zlocal);
 		while (std::max(std::max(ax, ay), az) - radius > 0.0) 
 		{ 
-			double cpx = centre_x + 0.999 * std::min(radius, std::max(-radius, xlocal));
-			double cpy = centre_y + 0.999 * std::min(radius, std::max(-radius, ylocal));
-			double cpz = centre_z + 0.999 * std::min(radius, std::max(-radius, zlocal));
-			double normalx = 0.0,
+			float cpx = centre_x + 0.999 * std::min(radius, std::max(-radius, xlocal));
+			float cpy = centre_y + 0.999 * std::min(radius, std::max(-radius, ylocal));
+			float cpz = centre_z + 0.999 * std::min(radius, std::max(-radius, zlocal));
+			float normalx = 0.0,
 				normaly = 0.0,
 				normalz = 0.0;
 			if (ax > radius) normalx = sgn(cpx - centre_x);
 			if (ay > radius) normaly = sgn(cpy - centre_y);
 			if (az > radius) normalz = sgn(cpz - centre_z);
-			double normnorm = sqrt(normalx * normalx + normaly * normaly + normalz * normalz);
+			float normnorm = sqrt(normalx * normalx + normaly * normaly + normalz * normalz);
 			normalx = normalx / normnorm;
 			normaly = normaly / normnorm;
 			normalz = normalz / normnorm;
@@ -543,10 +549,10 @@ void dumb_collisions(std::vector<Particle>& p_vec, Container& cont)
 			assert(abs(p_vec[i].x[0] / p_vec[i].v[0]) > 0.0 ||
 				!(std::cerr << p_vec[i].x[0] << ":" << p_vec[i].v[0] << ":" << abs(p_vec[i].x[0] / p_vec[i].v[0])));
 			
-			double dot = p_vec[i].v[0] * normalx 
+			float dot = p_vec[i].v[0] * normalx 
 				+ p_vec[i].v[1] * normaly
 				+ p_vec[i].v[2] * normalz;
-			double dcoeff = 1 + cr;
+			float dcoeff = 1 + cr;
 			p_vec[i].v[0] -= dcoeff * dot * normalx;
 			p_vec[i].v[1] -= dcoeff * dot * normaly;
 			p_vec[i].v[2] -= dcoeff * dot * normalz;
@@ -564,29 +570,29 @@ void dumb_collisions(std::vector<Particle>& p_vec, Container& cont)
 
 		}
 		/*
-		double indicate = pow(p_vec[i].x[0] - centre_x, 2) 
+		float indicate = pow(p_vec[i].x[0] - centre_x, 2) 
 			+ pow(p_vec[i].x[1] - centre_y, 2)
 			+ pow(p_vec[i].x[2] - centre_z, 2) - radius * radius;
 		if (indicate > 0.0) 
 		{
-			double dist = sqrt(pow(p_vec[i].x[0] - centre_x, 2) 
+			float dist = sqrt(pow(p_vec[i].x[0] - centre_x, 2) 
 				+ pow(p_vec[i].x[1] - centre_y, 2)
 				+ pow(p_vec[i].x[2] - centre_z, 2));
-			double cp[3] = { centre_x + 0.998 * radius * (p_vec[i].x[0] - centre_x) / dist, 
+			float cp[3] = { centre_x + 0.998 * radius * (p_vec[i].x[0] - centre_x) / dist, 
 				centre_y + 0.999 * radius * (p_vec[i].x[1] - centre_y) / dist,
 				centre_z + 0.999 * radius * (p_vec[i].x[2] - centre_z) / dist };
-			double depth = abs(dist - radius); 
-			double normal[3] = { (cp[0] - centre_x) / radius, 
+			float depth = abs(dist - radius); 
+			float normal[3] = { (cp[0] - centre_x) / radius, 
 				(cp[1] - centre_y) / radius,
 				(cp[2] - centre_z) / radius };
 			p_vec[i].x[0] = cp[0];
 			p_vec[i].x[1] = cp[1];
 			p_vec[i].x[2] = cp[2];
 
-			double dot = p_vec[i].v[0] * normal[0] 
+			float dot = p_vec[i].v[0] * normal[0] 
 				+ p_vec[i].v[1] * normal[1]
 				+ p_vec[i].v[2] * normal[2];
-			double dcoeff = 1 + cr;//* depth / dt / sqrt(pow(p_vec[i].v[0], 2) + pow(p_vec[i].v[1], 2));
+			float dcoeff = 1 + cr;//* depth / dt / sqrt(pow(p_vec[i].v[0], 2) + pow(p_vec[i].v[1], 2));
 			p_vec[i].v[0] = p_vec[i].v[0] - dcoeff * dot * normal[0];
 			p_vec[i].v[1] = p_vec[i].v[1] - dcoeff * dot * normal[1];
 			p_vec[i].v[2] = p_vec[i].v[2] - dcoeff * dot * normal[2];

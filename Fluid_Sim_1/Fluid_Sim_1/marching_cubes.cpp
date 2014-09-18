@@ -8,13 +8,13 @@
 //  ---------------------------------------------------------------
 
 //  attempt to optimize calculations
-const double mc_term = 315 / 64 / PI / pow(h, 9);
+const float mc_term = 315 / 64 / PI / pow(h, 9);
 
 //  rendering resolution
-const double mclen = 0.018;
+const float mclen = 0.018;
 
 //  threshold for mcubes. higher == easier for particles to be considered on the "surface"
-const double thresh = .45;
+const float thresh = .45;
 
 //  various mc grid properties, determined by resolution
 const int mcx = (int) (ceil((SIZE_X / mclen) + 0.1) + 0.5) + 1; 
@@ -28,9 +28,9 @@ const int mcsize = mcx * mcy * mcz;
 //  for storing vertexes ready for mc algorithm or for
 //  OpenGl rendering
 struct mc_vertex {
-	double pos[3];
-	double val;
-	double normal[3];
+	float pos[3];
+	float val;
+	float normal[3];
 
 	mc_vertex ()
 	{
@@ -54,16 +54,16 @@ struct GRIDCELL {
 //  some peripheral functions
 //  ---------------------------------------------------------------
 
-mc_vertex VertexInterp(double isolevel, mc_vertex& vert1, mc_vertex& vert2);
+mc_vertex VertexInterp(float isolevel, mc_vertex& vert1, mc_vertex& vert2);
 
-int Polygonise(GRIDCELL& grid,double isolevel, mc_vertex* triangles);
+int Polygonise(GRIDCELL& grid,float isolevel, mc_vertex* triangles);
 
 //  return actual value of position along a certain axes, given index into mc grid
-double mc_posx(int i) {  return (i % mcx) * mclen;  }
+float mc_posx(int i) {  return (i % mcx) * mclen;  }
 
-double mc_posy(int i) {  return ( (i % (mcx * mcy)) / mcx) * mclen;  }
+float mc_posy(int i) {  return ( (i % (mcx * mcy)) / mcx) * mclen;  }
 
-double mc_posz(int i) {  return (i / (mcx * mcy)) * mclen;  }
+float mc_posz(int i) {  return (i / (mcx * mcy)) * mclen;  }
 
 
 //  ---------------------------------------------------------------
@@ -71,7 +71,7 @@ double mc_posz(int i) {  return (i / (mcx * mcy)) * mclen;  }
 //  ---------------------------------------------------------------
 
 //  iterate color field calculations for a vertex over a cell
-void mc_iterate_cf_over_cell(double* vertex, double pos[], Cell& acell)
+void mc_iterate_cf_over_cell(float* vertex, float pos[], Cell& acell)
 {
 	//  get iterator for cell
 	std::list<Particle*>::iterator it = acell.ref_list.begin();
@@ -79,7 +79,7 @@ void mc_iterate_cf_over_cell(double* vertex, double pos[], Cell& acell)
 	//  iterate over cell
 	while (it != acell.ref_list.end()) 
 	{
-		const double sqr_dist = pow(pos[0] - (*it)->x[0], 2) 
+		const float sqr_dist = pow(pos[0] - (*it)->x[0], 2) 
 			+ pow(pos[1] - (*it)->x[1], 2)
 			+ pow(pos[2] - (*it)->x[2], 2);
 
@@ -187,7 +187,7 @@ void mc_render_image(std::vector<Cell>& c_vec)
 		mc_field[i].normal[1] = (mc_field[i - mcx].val - mc_field[i + mcx].val) / mcy; 
 		mc_field[i].normal[2] = (mc_field[i - mcx * mcy].val - mc_field[i + mcx * mcy].val) / mcz; 
 
-		double norm = sqrt(pow(mc_field[i].normal[0], 2) 
+		float norm = sqrt(pow(mc_field[i].normal[0], 2) 
 			+ pow(mc_field[i].normal[1], 2)
 			+ pow(mc_field[i].normal[2], 2));
 
@@ -269,7 +269,7 @@ void mc_render_image(std::vector<Cell>& c_vec)
 	0 will be returned if the grid cell is either totally above
    of totally below the isolevel.
 */
-int Polygonise(GRIDCELL& grid, double isolevel, mc_vertex* triangles)
+int Polygonise(GRIDCELL& grid, float isolevel, mc_vertex* triangles)
 {
    int ntriang;
    int cubeindex;
@@ -347,9 +347,9 @@ return(ntriang);
 Linearly interpolate the position where an isosurface cuts
 an edge between two vertices, each with their own scalar value
 */
-mc_vertex VertexInterp(double isolevel, mc_vertex& vert1, mc_vertex& vert2) 
+mc_vertex VertexInterp(float isolevel, mc_vertex& vert1, mc_vertex& vert2) 
 {
-	double mu;
+	float mu;
 	mc_vertex ans;
 
 	if (abs(isolevel - vert1.val) < 0.00001)
@@ -367,7 +367,7 @@ mc_vertex VertexInterp(double isolevel, mc_vertex& vert1, mc_vertex& vert2)
 	ans.normal[1] = vert1.normal[1] + mu * (vert2.normal[1] - vert1.normal[1]);
 	ans.normal[2] = vert1.normal[2] + mu * (vert2.normal[2] - vert1.normal[2]);
 
-	const double norm = sqrt(pow(ans.normal[0],2) 
+	const float norm = sqrt(pow(ans.normal[0],2) 
 		+ pow(ans.normal[1],2) 
 		+ pow(ans.normal[2],2));
 	

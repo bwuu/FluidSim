@@ -12,7 +12,7 @@ Vec3 Vec3::operator - ()
 	return res;
 }
 
-Vec3::Vec3 (double a, double b, double c) 
+Vec3::Vec3 (float a, float b, float c) 
 {
 	x[0] = a;
 	x[1] = b;
@@ -39,7 +39,7 @@ Vec3 Vec3::operator - (Vec3 arg)
 }
 	
 
-Vec3 Vec3::operator * (double arg)
+Vec3 Vec3::operator * (float arg)
 {
 	Vec3 res;
 	res.x[0] = x[0] * arg;
@@ -56,12 +56,12 @@ Vec3 Vec3::operator += (Vec3 arg)
 	return *this;
 }
 
-double Vec3::sqr_mag ()
+float Vec3::sqr_mag ()
 {
 	return (x[0] * x[0] + x[1] * x[1] + x[2] * x[2]); 
 }
 
-double Vec3::mag() 
+float Vec3::mag() 
 {
 	return sqrt(sqr_mag());
 }
@@ -69,7 +69,7 @@ double Vec3::mag()
 Vec3 Vec3::unit_vec () 
 {
 	Vec3 res;
-	const double norm = mag();
+	const float norm = mag();
 	assert(norm > 0.0);
 	res.x[0] = x[0] / norm;
 	res.x[1] = x[1] / norm;
@@ -77,7 +77,7 @@ Vec3 Vec3::unit_vec ()
 	return (res);
 }
 
-double dot(Vec3 v1, Vec3 v2)
+float dot(Vec3 v1, Vec3 v2)
 {
 	return (v1.x[0] * v2.x[0] + v1.x[1] * v2.x[1] + v1.x[2] * v2.x[2]);
 }

@@ -3,38 +3,38 @@
 #include "SPH_structs.h"
 
 // lean lower left
-double ggposx(int i) 
+float ggposx(int i) 
 {  
 	return (i % ggx) * gglen;  
 }
 
-double ggposy(int i) 
+float ggposy(int i) 
 {
 	return ( (i % (ggx * ggy)) / ggx) * gglen;  
 }
 
-double ggposz(int i) 
+float ggposz(int i) 
 {
 	return (i / (ggx * ggy)) * gglen;  
 }
 
-void gg_rand_ingrid(int i, double ghostpos[])
+void gg_rand_ingrid(int i, float ghostpos[])
 {
 	ghostpos[0] = ggposx(i) + ( gglen * rand() ) / RAND_MAX;
 	ghostpos[1] = ggposy(i) + ( gglen * rand() ) / RAND_MAX;
 	ghostpos[2] = ggposz(i) + ( gglen * rand() ) / RAND_MAX;
 }
 
-void gg_rand_ow_ext(double ghostpos[])
+void gg_rand_ow_ext(float ghostpos[])
 {
-	double randvec[2] = { (rand() % 10001 - 5000) / 5000.0, (rand() % 10001 - 5000) / 5000.0 };
-	double root = sqrt(pow(randvec[0], 2) + pow(randvec[1], 2) + pow(randvec[2], 2));
+	float randvec[2] = { (rand() % 10001 - 5000) / 5000.0, (rand() % 10001 - 5000) / 5000.0 };
+	float root = sqrt(pow(randvec[0], 2) + pow(randvec[1], 2) + pow(randvec[2], 2));
 	randvec[0] /= root;
 	randvec[1] /= root;
 
-	double ax = abs(ghostpos[0] - centre_x);
-	double ay = abs(ghostpos[1] - centre_y);
-	double az = abs(ghostpos[2] - centre_z);
+	float ax = abs(ghostpos[0] - centre_x);
+	float ay = abs(ghostpos[1] - centre_y);
+	float az = abs(ghostpos[2] - centre_z);
 	if (ax >= ay && ax >= az)
 	{
 		ghostpos[1] += gglen * gge * randvec[0];
@@ -53,10 +53,10 @@ void gg_rand_ow_ext(double ghostpos[])
 	else assert(false);// remove
 }
 
-void gg_rand_ow_int(double ghostpos[])
+void gg_rand_ow_int(float ghostpos[])
 {
-	double randvec[3] = { (rand() % 10001 - 5000) / 5000.0, (rand() % 10001 - 5000) / 5000.0 };
-	double root = sqrt(pow(randvec[0], 2) + pow(randvec[1], 2) + pow(randvec[2], 2));
+	float randvec[3] = { (rand() % 10001 - 5000) / 5000.0, (rand() % 10001 - 5000) / 5000.0 };
+	float root = sqrt(pow(randvec[0], 2) + pow(randvec[1], 2) + pow(randvec[2], 2));
 	randvec[0] /= root;
 	randvec[1] /= root;
 	randvec[2] /= root;
@@ -64,13 +64,13 @@ void gg_rand_ow_int(double ghostpos[])
 	assert(randvec[1] < 1.1);
 	assert(randvec[2] < 1.1);
 
-	double randnum = (rand() % 1001) / 1000.0;
+	float randnum = (rand() % 1001) / 1000.0;
 	ghostpos[0] += randvec[0] * (1 + randnum) * ggradius;
 	ghostpos[1] += randvec[1] * (1 + randnum) * ggradius;
 	ghostpos[2] += randvec[2] * (1 + randnum) * ggradius;
 }
 
-int getmax_argpos(double a, double b, double c)
+int getmax_argpos(float a, float b, float c)
 {
 	if (a > b && a > c) return 1;
 	if (b > a && b > c) return 2;
@@ -80,14 +80,14 @@ int getmax_argpos(double a, double b, double c)
 }
 
 
-void gg_project(double ghostpos[])
+void gg_project(float ghostpos[])
 {
-	double xlocal = ghostpos[0] - centre_x;
-	double ylocal = ghostpos[1] - centre_y;
-	double zlocal = ghostpos[2] - centre_z;
-	double ax = abs(xlocal); 
-	double ay = abs(ylocal);
-	double az = abs(zlocal);
+	float xlocal = ghostpos[0] - centre_x;
+	float ylocal = ghostpos[1] - centre_y;
+	float zlocal = ghostpos[2] - centre_z;
+	float ax = abs(xlocal); 
+	float ay = abs(ylocal);
+	float az = abs(zlocal);
 	//  ????  does it work when there equal -all
 	bool x2inner = ax < radius + gglen * thickness / 2;
 	bool y2inner = ay < radius + gglen * thickness / 2;
@@ -210,7 +210,7 @@ void sample_ext(std::vector<Particle>& static_vec)
 	bool sample_success;
 	for ( ; !active_grid_vec.empty(); active_grid_vec.pop_back() )
 	{
-		double ghost_pos[3];
+		float ghost_pos[3];
 		sample_success = false;
 		for (int i = 0; i < 30; i++)
 		{
@@ -270,8 +270,8 @@ void sample_int(std::vector<Particle>& static_vec)
 
 	for (int i = 0; i < static_vec.size(); i++)
 	{
-		double base_ghostpos[3] = { static_vec[i].x[0], static_vec[i].x[1], static_vec[i].x[2] };
-		double ghostpos[3];
+		float base_ghostpos[3] = { static_vec[i].x[0], static_vec[i].x[1], static_vec[i].x[2] };
+		float ghostpos[3];
 
 		bool sample_success = false;
 		for (int j = 0; j < 30; j++)
@@ -281,12 +281,12 @@ void sample_int(std::vector<Particle>& static_vec)
 			ghostpos[2] = base_ghostpos[2];
 			gg_rand_ow_int(ghostpos);
 
-			double xlocal = ghostpos[0] - centre_x;
-			double ylocal = ghostpos[1] - centre_y;
-			double zlocal = ghostpos[1] - centre_z;
-			double ax = abs(xlocal);
-			double ay = abs(ylocal);
-			double az = abs(zlocal);
+			float xlocal = ghostpos[0] - centre_x;
+			float ylocal = ghostpos[1] - centre_y;
+			float zlocal = ghostpos[1] - centre_z;
+			float ax = abs(xlocal);
+			float ay = abs(ylocal);
+			float az = abs(zlocal);
 			
 			bool x_bounded = ax < radius + thickness * gglen;
 			bool y_bounded = ay < radius + thickness * gglen;

@@ -5,20 +5,20 @@
 #include "Vec3.h"
 
 struct Particle {
-	double x[3];
-	double v[3];
-	double f_pressure[3];
-	double f_viscosity[3];
-	double f_gravity[3];
-	double f_surface_tension[3];
-	double inward_normal[3];
-	double norm;
-	double color_laplace;
-	double pressure;
-	double mass_density;
+	float x[3];
+	float v[3];
+	float f_pressure[3];
+	float f_viscosity[3];
+	float f_gravity[3];
+	float f_surface_tension[3];
+	float inward_normal[3];
+	float norm;
+	float color_laplace;
+	float pressure;
+	float mass_density;
 	bool   ghost_flag;
 
-	Particle(double a, double b, double c) 
+	Particle(float a, float b, float c) 
 	{
 		for (int i = 0; i < 3; i++) 
 		{
@@ -75,8 +75,8 @@ struct Cell {
 };
 
 struct Container {
-	double x[3];
-	double v[3];
+	float x[3];
+	float v[3];
 
 	Container() {
 		for (int i = 0; i < 3; i++)
@@ -86,7 +86,7 @@ struct Container {
 		}
 	}
 
-	void move(double a, double b, double c) {
+	void move(float a, float b, float c) {
 		x[0] += a;
 		x[1] += b;
 		x[2] += c;
