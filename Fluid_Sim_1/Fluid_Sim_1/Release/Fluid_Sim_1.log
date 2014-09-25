@@ -1,4 +1,4 @@
-﻿Build started 9/18/2014 12:21:57 PM.
+﻿Build started 9/25/2014 1:05:11 PM.
      1>Project "C:\Users\Bryan\Desktop\fluid sim\FluidSim\Fluid_Sim_1\Fluid_Sim_1\Fluid_Sim_1.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt Simulation.cpp
@@ -7,22 +7,27 @@
      1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(19): warning C4305: 'initializing' : truncation from 'double' to 'const float'
      1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(22): warning C4305: 'initializing' : truncation from 'double' to 'const float'
      1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(28): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(31): warning C4305: 'initializing' : truncation from 'double' to 'const float'
      1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(34): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(37): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(48): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(49): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(50): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(62): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(64): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(66): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(68): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(77): warning C4305: 'initializing' : truncation from 'double' to 'const float'
-     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(79): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
-     1>Simulation.cpp(95): warning C4018: '<' : signed/unsigned mismatch
-     1>Simulation.cpp(166): warning C4018: '<' : signed/unsigned mismatch
-     1>Simulation.cpp(170): warning C4018: '<' : signed/unsigned mismatch
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(40): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(45): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(46): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(47): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(56): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(58): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(60): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(62): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(71): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>c:\users\bryan\desktop\fluid sim\fluidsim\fluid_sim_1\fluid_sim_1\parameters.h(73): warning C4244: 'initializing' : conversion from 'double' to 'const float', possible loss of data
+     1>Simulation.cpp(122): warning C4018: '<' : signed/unsigned mismatch
+     1>Simulation.cpp(186): warning C4018: '<' : signed/unsigned mismatch
+     1>Simulation.cpp(190): warning C4018: '<' : signed/unsigned mismatch
+     1>Simulation.cpp(194): warning C4018: '<' : signed/unsigned mismatch
+         GLM: rotate function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
+         GLM: perspective function taking degrees as a parameter is deprecated. #define GLM_FORCE_RADIANS before including GLM headers to remove this message.
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Bryan\Desktop\fluid sim\FluidSim\Fluid_Sim_1\Release\Fluid_Sim_1.exe" /NOLOGO opengl32.lib glut32.lib glu32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Bryan\Desktop\fluid sim\FluidSim\Fluid_Sim_1\Release\Fluid_Sim_1.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Bryan\Desktop\fluid sim\FluidSim\Fluid_Sim_1\Release\Fluid_Sim_1.lib" /MACHINE:X86 /PROFILE /SAFESEH Release\boundary_drawing_tools.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Bryan\Desktop\fluid sim\FluidSim\Fluid_Sim_1\Release\Fluid_Sim_1.exe" /NOLOGO opengl32.lib glut32.lib glew32.lib glu32.lib glfw3.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Bryan\Desktop\fluid sim\FluidSim\Fluid_Sim_1\Release\Fluid_Sim_1.pdb" /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Bryan\Desktop\fluid sim\FluidSim\Fluid_Sim_1\Release\Fluid_Sim_1.lib" /MACHINE:X86 /PROFILE /SAFESEH Release\boundary_drawing_tools.obj
+         Release\loadShader.obj
          Release\marching_cubes.obj
          Release\Simulation.obj
          Release\simul_funcs.obj
@@ -34,4 +39,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:04.02
+Time Elapsed 00:00:01.82

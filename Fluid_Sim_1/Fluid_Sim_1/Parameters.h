@@ -7,7 +7,7 @@
 const float SIZE_X = 1.0, SIZE_Y = 1.0, SIZE_Z = 1.0;
 
 //  support radius
-const float h = 0.0457;
+const float h = 0.03;
 
 //  linked cell grid size
 const int GRID_X = (int) (ceil((SIZE_X / h) + 0.1) + 0.5) + 1,
@@ -19,31 +19,28 @@ const int GRID_X = (int) (ceil((SIZE_X / h) + 0.1) + 0.5) + 1,
 const float g = -9.8;
 
 //  time step
-const float dt = 0.001;
+const float dt = 0.0005;
 
 //  rest density
 const float p0 = 1000.0;
 
 //  particle mass
-const float mass = 0.02; // opt - N2
+const float mass = 0.015; // opt - N2
 
 //  viscosity 
-const float viscosity_const = 3.5;
+const float viscosity_const = 0.0004798;
 
 //  surface tension 
-const float st = 0.073;
+const float st = -0.00000074;
 
 //  threshold
-const float l = 7.065;
+const float l = 7;
 
 //  gass stiffness
-const float k = 3.5;
-
-//  restitution
-const float cr = 0.0;
+const float k = 3.3;
 
 // specification of initial particle grid size
-const int init_slen_y = 13, init_slen_x = 13, init_slen_z = 13;
+const int init_slen_y = 20, init_slen_x = 20, init_slen_z = 20;
 // make sure top values are put as floats
 const float init_spacing_x = .5 / init_slen_x, 
 	init_spacing_y = .5 / init_slen_y,
@@ -51,15 +48,12 @@ const float init_spacing_x = .5 / init_slen_x,
 
 const float c0 = 5.0;
 
-const float c1 = 0.0;
-const float c2 = 0.0;
-
 const float gamma = 7.0;
 
 const float bulk_modulus = p0 * c0 * c0 / gamma;
 
 const float centre_x = 0.5, centre_y = 0.5, centre_z = 0.5;
-const float radius = 0.3;
+const float radius = 0.35;
 
 const float corr = 0.01 * h * h;
 

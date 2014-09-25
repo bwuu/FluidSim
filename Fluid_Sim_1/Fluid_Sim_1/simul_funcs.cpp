@@ -8,9 +8,14 @@
 //  by reference (&)
 
 //  KERNELS
-float poly6kernel (float r)
+float poly6kernel (float r2)
 {
-    return 315 / (64 * PI * pow(h, 9)) * pow(h*h - r*r, 3);
+    return 315 / (64 * PI * pow(h, 9)) * pow(h*h - r2, 3);
+}
+
+float d2poly6kernel (float r2)
+{
+    return 945 / (8 * PI * pow(h, 9)) * (h*h - r2) * (r2 - 3/4 * (h*h- r2));
 }
 
 //  ************************************************************
@@ -72,7 +77,7 @@ void iterate_md_over_cell(Particle* p, Cell& acell)
 		}
 
 		//  can get huge
-		const float kernel_res = 315 / (64 * PI * pow(h, 9)) * (pow((h*h - sqr_dist), 3));
+		const float kernel_res = poly6kernel(sqr_dist);
 		
 		assert(kernel_res <= DBL_MAX && kernel_res >= -DBL_MAX);
 		p->mass_density += kernel_res * mass;
@@ -179,8 +184,10 @@ void update_mass_densities(std::vector<Cell>& c_vec)
 			if (x_down && y_down && z_up) iterate_md_over_cell(*it1, c_vec[i - 1 + GRID_X * (GRID_Y - 1)]);
 			if (x_down && z_up) iterate_md_over_cell(*it1, c_vec[i - 1 + GRID_X * GRID_Y]);
 
-			if ((*it1)->mass_density < 1)
-				(*it1)->mass_density = p0;
+			if ((*it1)->mass_density < 100)
+				(*it1)->mass_density = 100;
+			if ((*it1)->mass_density > 5000)
+				(*it1)->mass_density = 5000;
 
 			assert((*it1)->mass_density <= DBL_MAX && (*it1)->mass_density >= -DBL_MAX);
 		}
@@ -197,13 +204,16 @@ void update_pressure_field(std::vector<Particle>& p_vec)
 {
 	for (int i = 0; i < p_vec.size(); i++) 
 	{
-		// set pressure
-		p_vec[i].pressure = (p_vec[i].mass_density >= p0) ?
-			(p0 + bulk_modulus * (pow(p_vec[i].mass_density / p0, gamma) - 1)) : 0;
+        //if (i == 5) std::cout << p_vec[i].mass_density << "\n";
 
-		//p_vec[i].pressure = k * (p_vec[i].mass_density - p0);
+		// set pressure
+		//p_vec[i].pressure = //(p_vec[i].mass_density >= p0) ?
+		//	(p0 + bulk_modulus * (pow(p_vec[i].mass_density / p0, gamma) - 1));// : 0;
+		p_vec[i].pressure = k * (p_vec[i].mass_density - p0);
+        //if (i == 5) std::cout << p_vec[i].pressure << "\n";
+
 		assert(p_vec[i].pressure <= DBL_MAX && p_vec[i].pressure >= -DBL_MAX);
-		assert(p_vec[i].pressure >= 0);
+		//assert(p_vec[i].pressure >= 0);
 	}
 	return;
 }
@@ -235,8 +245,8 @@ void iterate_forces_over_cell(Particle* p, Cell& acell)
 		float x_force, y_force, z_force;
 		
 		//  pressure calc - force is actually acceleration lol 
-		symmetric_calc_res = (p->pressure * pow(inv_density_p, 2) + (*it)->pressure * pow(inv_density_it, 2))
-			* mass * h6_term / dist * pow(h - dist, 2);
+		symmetric_calc_res = (p->pressure + (*it)->pressure) / (2 * p->mass_density * (*it)->mass_density)
+			* h6_term / dist * pow(h - dist, 2);
 		x_force = symmetric_calc_res * x_disp;
 		y_force = symmetric_calc_res * y_disp;
 		z_force = symmetric_calc_res * z_disp;
@@ -248,7 +258,7 @@ void iterate_forces_over_cell(Particle* p, Cell& acell)
 		(*it)->f_pressure[2] -= z_force;// / p->mass_density;
 
 		// viscosity calc
-		symmetric_calc_res = viscosity_const * mass * h6_term * (h - dist);
+		symmetric_calc_res = viscosity_const * h6_term * (h - dist);
 		x_force = symmetric_calc_res * ((*it)->v[0] - p->v[0]);
 		y_force = symmetric_calc_res * ((*it)->v[1] - p->v[1]);
 		z_force = symmetric_calc_res * ((*it)->v[2] - p->v[2]);
@@ -271,9 +281,8 @@ void iterate_forces_over_cell(Particle* p, Cell& acell)
 		(*it)->inward_normal[1] -= y_force * inv_density_p;
 		(*it)->inward_normal[2] -= z_force * inv_density_p;
 		//  color field laplacian
-		x_force = symmetric_calc_res * (3 * h * h - 7 * sqr_dist); 
-		p->color_laplace += x_force * inv_density_it;
-		(*it)->color_laplace += x_force * inv_density_p;
+		p->color_laplace += mass * inv_density_it * d2poly6kernel(sqr_dist);
+		(*it)->color_laplace += mass * inv_density_p * d2poly6kernel(sqr_dist);
 
 		it++;
 	}
@@ -315,33 +324,9 @@ void update_forces(std::vector<Cell>& c_vec)
 				float x_force, y_force, z_force;
 				float contrib;
 
-				//  mutual pressure force calculation - negatives accounted for and cancelled
-				/*
-				float artdot = ((*it1)->x[0] - (*it2)->x[0]) * ((*it1)->v[0] - (*it2)->v[0])
-					+ ((*it1)->x[1] - (*it2)->x[1]) * ((*it1)->v[1] - (*it2)->v[1])
-					+ ((*it1)->x[2] - (*it2)->x[2]) * ((*it1)->v[2] - (*it2)->v[2]);
-				float artific_kernel_res = 
-					(artdot > 0) ? 0 : (artdot / (sqr_dist + corr));
-					
-				assert(artific_kernel_res <= DBL_MAX && artific_kernel_res >= -DBL_MAX);
-				*/
 				symmetric_calc_res = 
-					h6_term * (h-dist) * (h-dist) * mass / dist
-					* ((*it1)->pressure / pow((*it1)->mass_density, 2) 
-					+ (*it2)->pressure / pow((*it2)->mass_density, 2));
-					/*
-					- c1 * c0 * 2 * h / ((*it1)->mass_density + (*it2)->mass_density) * artific_kernel_res
-					+ c2 * 2 * h * h / ((*it1)->mass_density + (*it2)->mass_density) * artific_kernel_res * artific_kernel_res ); 
-					*/
-				/*
-				(dist > h) ? 0 : (h6_term * (h-dist) * (h-dist) * mass / (dist + corr)
-				* ( ((*it1)->pressure + (*it2)->pressure) / 2 ));
-				*/
-				/*
-				- c1 * c0 * 2 * h / ((*it1)->mass_density + (*it2)->mass_density) * artific_kernel_res
-				+ c2 * 2 * h / ((*it1)->mass_density + (*it2)->mass_density) * artific_kernel_res *
-				artific_kernel_res ) );\*/
-				
+					h6_term * (h-dist) * (h-dist) / dist
+					* ((*it1)->pressure + (*it2)->pressure) / (2 * (*it1)->mass_density * (*it2)->mass_density);
 
 				assert(symmetric_calc_res <= DBL_MAX && symmetric_calc_res >= -DBL_MAX);
 				
@@ -360,7 +345,7 @@ void update_forces(std::vector<Cell>& c_vec)
 
 				//  mutual viscosity force calculation
 				symmetric_calc_res = 
-					viscosity_const * h6_term * (h-dist) * mass;
+					viscosity_const * h6_term * (h-dist);
 				x_force = symmetric_calc_res * ((*it2)->v[0] - (*it1)->v[0]); 
 				y_force = symmetric_calc_res * ((*it2)->v[1] - (*it1)->v[1]);
 				z_force = symmetric_calc_res * ((*it2)->v[2] - (*it1)->v[2]);
@@ -387,8 +372,8 @@ void update_forces(std::vector<Cell>& c_vec)
 				(*it2)->inward_normal[2] -= z_force / (*it1)->mass_density;
 				//  color field laplacian
 				contrib = symmetric_calc_res * (3 * h * h - 7 * sqr_dist); //opt - also the dist components
-				(*it1)->color_laplace += contrib / (*it2)->mass_density;
-				(*it2)->color_laplace += contrib / (*it1)->mass_density;
+				(*it1)->color_laplace += mass / (*it2)->mass_density * d2poly6kernel(sqr_dist);
+				(*it2)->color_laplace += mass / (*it1)->mass_density * d2poly6kernel(sqr_dist);
 
 				it2++;
 
@@ -483,14 +468,15 @@ void update_velocities(std::vector<Particle>& p_vec, Container& cont)
 {
 	for (int i = 0; i < p_vec.size(); i++) 
 	{
+        const float mu = 0.5;
 		p_vec[i].v[0] += dt * (p_vec[i].f_gravity[0]
-			+ p_vec[i].f_pressure[0] + (p_vec[i].f_viscosity[0] + p_vec[i].f_surface_tension[0]) / p_vec[i].mass_density
+			+ p_vec[i].f_pressure[0] * mu + p_vec[i].f_viscosity[0] + p_vec[i].f_surface_tension[0]
 			- cont.v[0]);
 		p_vec[i].v[1] += dt * (p_vec[i].f_gravity[1]
-			+ p_vec[i].f_pressure[1] + (p_vec[i].f_viscosity[1] + p_vec[i].f_surface_tension[1]) / p_vec[i].mass_density
+			+ p_vec[i].f_pressure[1] * mu + p_vec[i].f_viscosity[1] + p_vec[i].f_surface_tension[1]
 			- cont.v[1]);
 		p_vec[i].v[2] += dt * (p_vec[i].f_gravity[2]
-			+ p_vec[i].f_pressure[2] + (p_vec[i].f_viscosity[2] + p_vec[i].f_surface_tension[2]) / p_vec[i].mass_density
+			+ p_vec[i].f_pressure[2] * mu + p_vec[i].f_viscosity[2] + p_vec[i].f_surface_tension[2]
 			- cont.v[2]);
 		/*
 		if (i == 5) std::cout << "pressures" << p_vec[i].f_pressure[0] << p_vec[i].f_pressure[1];
@@ -532,9 +518,9 @@ void dumb_collisions(std::vector<Particle>& p_vec, Container& cont)
 			az = abs(zlocal);
 		while (std::max(std::max(ax, ay), az) - radius > 0.0) 
 		{ 
-			float cpx = centre_x + 0.999 * std::min(radius, std::max(-radius, xlocal));
-			float cpy = centre_y + 0.999 * std::min(radius, std::max(-radius, ylocal));
-			float cpz = centre_z + 0.999 * std::min(radius, std::max(-radius, zlocal));
+			float cpx = centre_x + 0.999999 * std::min(radius, std::max(-radius, xlocal));
+			float cpy = centre_y + 0.999999 * std::min(radius, std::max(-radius, ylocal));
+			float cpz = centre_z + 0.999999 * std::min(radius, std::max(-radius, zlocal));
 			float normalx = 0.0,
 				normaly = 0.0,
 				normalz = 0.0;
@@ -552,10 +538,9 @@ void dumb_collisions(std::vector<Particle>& p_vec, Container& cont)
 			float dot = p_vec[i].v[0] * normalx 
 				+ p_vec[i].v[1] * normaly
 				+ p_vec[i].v[2] * normalz;
-			float dcoeff = 1 + cr;
-			p_vec[i].v[0] -= dcoeff * dot * normalx;
-			p_vec[i].v[1] -= dcoeff * dot * normaly;
-			p_vec[i].v[2] -= dcoeff * dot * normalz;
+			p_vec[i].v[0] -= 2 * dot * normalx;
+			p_vec[i].v[1] -= 2 * dot * normaly;
+			p_vec[i].v[2] -= 2 * dot * normalz;
 			
 			p_vec[i].x[0] = cpx + 0.5 * dt * p_vec[i].v[0];
 			p_vec[i].x[1] = cpy + 0.5 * dt * p_vec[i].v[1];
@@ -569,35 +554,6 @@ void dumb_collisions(std::vector<Particle>& p_vec, Container& cont)
 			az = abs(zlocal);
 
 		}
-		/*
-		float indicate = pow(p_vec[i].x[0] - centre_x, 2) 
-			+ pow(p_vec[i].x[1] - centre_y, 2)
-			+ pow(p_vec[i].x[2] - centre_z, 2) - radius * radius;
-		if (indicate > 0.0) 
-		{
-			float dist = sqrt(pow(p_vec[i].x[0] - centre_x, 2) 
-				+ pow(p_vec[i].x[1] - centre_y, 2)
-				+ pow(p_vec[i].x[2] - centre_z, 2));
-			float cp[3] = { centre_x + 0.998 * radius * (p_vec[i].x[0] - centre_x) / dist, 
-				centre_y + 0.999 * radius * (p_vec[i].x[1] - centre_y) / dist,
-				centre_z + 0.999 * radius * (p_vec[i].x[2] - centre_z) / dist };
-			float depth = abs(dist - radius); 
-			float normal[3] = { (cp[0] - centre_x) / radius, 
-				(cp[1] - centre_y) / radius,
-				(cp[2] - centre_z) / radius };
-			p_vec[i].x[0] = cp[0];
-			p_vec[i].x[1] = cp[1];
-			p_vec[i].x[2] = cp[2];
-
-			float dot = p_vec[i].v[0] * normal[0] 
-				+ p_vec[i].v[1] * normal[1]
-				+ p_vec[i].v[2] * normal[2];
-			float dcoeff = 1 + cr;//* depth / dt / sqrt(pow(p_vec[i].v[0], 2) + pow(p_vec[i].v[1], 2));
-			p_vec[i].v[0] = p_vec[i].v[0] - dcoeff * dot * normal[0];
-			p_vec[i].v[1] = p_vec[i].v[1] - dcoeff * dot * normal[1];
-			p_vec[i].v[2] = p_vec[i].v[2] - dcoeff * dot * normal[2];
-		}
-		*/
 		
 	}
 }
